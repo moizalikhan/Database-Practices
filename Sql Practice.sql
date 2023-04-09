@@ -1,8 +1,8 @@
-
-/*create database compilance_users
-
+*/ Practice 1 */
+create database compilance_users
 use compilance_users
 Go
+
 create table tbluser
 (
 id int not null primary key,
@@ -19,9 +19,8 @@ Gender nvarchar not null
 
 Alter table tbluser add constraint tbluser_GenderID_FK
 Foreign Key (GenderId) references tblGender(ID)
-*/
 
-/*
+*/ Practice 2 */
 insert into tbluser (id,Name, Email, GenderId) values(1, 'jack','j@r.com', 1)
 insert into tbluser (id,Name, Email, GenderID) values(2, 'sara','s@r.com',2)
 insert into tbluser (id,Name, Email, GenderId) values(3, 'leo','l@r.com', 1)
@@ -43,60 +42,45 @@ constraint DF_tbluser_HouseNo default null
 
 Alter table tbluser
 drop constraint DF_tbluser_HouseNo
-*/
 
-/*
+*/ Practice 3 */
 Select * from tbluser
 Select * from tblGender
 
 delete from tblGender where id = 2
 delete from tblGender where id = 1
 delete from tblGender where id = 3
-*/
 
-/*
+*/ Practice 4 */
 Select * from tbluser
 Select * from tblGender
-
 alter table tbluser
 add Age_again int
-
 insert into tblGender( id , Gender) values(1, 'M')
 insert into tbluser(id, Name, Email, GenderID, HouseNo, age) values (8, 'sara', 's@r.com', 1, null, 230)
-
 alter table tbluser
 add constraint Ck_tbluser_Age check(age_again> 0 and age_again<150)
-
 insert into tbluser(id, Name, Email, GenderID, HouseNo, age, age_again) values (10, 'sara', 's@r.com', 1, null,null,110)
-*/
 
-/*
+*/ Practice 5 */
 Select * from tbluser
 Select * from tblGender
 select * from tblperson
-
 insert into tblperson values('moiz')
 insert into tblperson values('john')
 insert into tblperson values('jack')
 insert into tblperson values('sara')
-
 delete from tblperson where personid = 1
-
 insert into tblperson values('judy')
-
 set identity_insert tblperson on
 insert into tblperson (personid, name) values (1,'martin')
-
 delete from tblperson
-
 set identity_insert tblperson off
 insert into tblperson values('kamran')
-
 dbcc checkident(tblperson, reseed, 0)
 insert into tblperson values('lauren')
-*/
 
-/*
+*/ Practice 5 */
 create table test1
 (
 	id int identity(1,1),
@@ -120,9 +104,8 @@ begin
 end
 insert into test1 values('ghi')
 insert into test1 values('ijk')
-*/
 
-/*
+*/ Practice 6 */
 select * from tbluser
 delete from tbluser
 alter table tbluser
@@ -138,12 +121,11 @@ insert into tbluser values(5,'szz','f@m.com',1,23,45)
 alter table tbluser
 drop constraint UK_tbluser_email
 insert into tbluser values(6,'moiz','m@m.com',1,23,45)
-*/
 
-/*
+
+*/ Practice 7 */
 select * from tbluser
 select [name] from tbluser
 select distinct Email from tbluser 
 select distinct name from tbluser
 select distinct name, email from tbluser
-*/
