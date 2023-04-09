@@ -3,6 +3,7 @@ create database compilance_users
 use compilance_users
 Go
 
+
 create table tbluser
 (
 id int not null primary key,
