@@ -124,6 +124,28 @@ drop constraint UK_tbluser_email
 insert into tbluser values(6,'moiz','m@m.com',1,23,45)
 
 
+
+/*lecture 10:
+[compilanceusers].[dbo].[tablename]
+where.
+<>  or != not equal to in sql
+distinct keyword
+where clause in sql:
+	in for lists
+	between
+	like for pattern for regular expressions.
+	not 
+wild cards:
+	%
+	_for only one character
+	[]for specify a list of characters
+	[^]for not start in that characters
+and or operators.
+orderby clause:
+	for sorting in aplhabatical order
+	desc, age asc
+top keyword
+*/
 /* Practice 7 */
 select * from tbluser
 select [name] from tbluser
