@@ -67,3 +67,22 @@ JOIN boxoffice
 ON movies.id = boxoffice.movie_id
 Where even_years%2==0;
 
+SELECT max(Years_employed) FROM employees;
+
+SELECT Role , AVG(Years_employed) as AVG_Years_employed from Employees group by Role
+
+SELECT Building, sum(Years_employed) from Employees group by Building
+
+SELECT DISTINCT COUNT(*) FROM employees WHERE ROLE LIKE "Artist";
+
+SELECT Role, COUNT(*) FROM employees Group by Role;
+
+SELECT Role, Sum(Years_employed) FROM employees where Role like "Engineer";
+
+SELECT Director, count(title) FROM movies group by Director;
+
+SELECT Director, Sum(Domestic_sales+International_sales) as Total FROM movies inner join
+    Boxoffice
+    on
+    Movies.id = Boxoffice.Movie_id
+    group by Director;
