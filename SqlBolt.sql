@@ -23,3 +23,47 @@ where country = "Mexico" order by population desc limit 2
 select city from North_american_cities 
 where country = "United States" order by population desc limit 2 offset 2
 
+SELECT title , Domestic_sales , International_sales FROM movies
+inner join Boxoffice on Movies.id = Boxoffice.Movie_id;
+
+SELECT title , Domestic_sales , International_sales FROM movies
+inner join Boxoffice on Movies.id = Boxoffice.Movie_id
+where International_sales > Domestic_sales;
+
+SELECT title, Rating FROM movies
+inner join Boxoffice on Movies.id = Boxoffice.Movie_id
+order by rating desc;
+
+
+SELECT DISTINCT building FROM employees;
+-- 
+SELECT distinct Building_name from Buildings 
+right join Employees on Buildings.Building_name = Employees.Building;
+
+SELECT * FROM Buildings
+
+SELECT DISTINCT Building_name, Role FROM Buildings
+LEFT JOIN Employees ON Buildings.Building_name = Employees.Building
+
+SELECT Building_name FROM Buildings
+left join Employees on Buildings.Building_name = Employees.Building
+where building ISNULL;
+
+SELECT Title,
+(Domestic_sales + International_sales) / 1000000
+as Sales 
+FROM Movies
+inner join on
+Movies.Id = Boxoffice.Movie_id
+
+SELECT title, rating * 10 AS ratings
+FROM movies
+  JOIN boxoffice
+    ON movies.id = boxoffice.movie_id;
+
+SELECT title, year AS even_years
+FROM movies
+JOIN boxoffice
+ON movies.id = boxoffice.movie_id
+Where even_years%2==0;
+
