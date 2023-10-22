@@ -17,8 +17,6 @@ select city, state from station;
 
 select distinct city from station where id % 2 = 0;
 
-select count(city) - (select count(distinct city) from station)
-from station;
 
 select top 1 city, min(len(city)) from station group by
 city order by min(len(city))
@@ -122,6 +120,7 @@ select round(avg(population),1) from city;
 
 select sum(population) from city where countrycode = 'JPN'
 
+-- Subquery
 select max(population)- (select min(population) from city) from city 
 
 select cast(
@@ -253,3 +252,10 @@ AND c.difficulty_level = d.difficulty_level
 GROUP BY h.hacker_id ,h.name
 HAVING COUNT(s.submission_id) > 1
 ORDER BY COUNT(s.submission_id) DESC, h.hacker_id ASC
+
+
+-- Subquery
+select count(city) - (select count(distinct city) from station)
+from station;
+-- Subquery
+select max(population)- (select min(population) from city) from city
