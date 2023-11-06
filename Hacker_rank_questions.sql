@@ -1,7 +1,8 @@
 select * from city
 where CountryCode = 'USA' And population > 100000;
 
-select name from city where CountryCode = 'USA' and population > 120000;
+select name from city where CountryCode = 'USA'
+and population > 120000;
 
 Select * from City;
 
@@ -66,9 +67,9 @@ where marks>75
 order by
  Right(name,3), id asc
 
- select name from employee order by name;
+select name from employee order by name;
 
- select  name from employee where salary>2000 and months <10;
+select  name from employee where salary>2000 and months <10;
 
 SELECT CASE
 WHEN (A + B <= C) OR (B+C <= A) OR (A+C <= B) THEN "Not A Triangle" 
@@ -78,10 +79,10 @@ ELSE "Scalene"
 END 
 FROM TRIANGLES
 
-select Concat(name,'(',SUBSTRING (occupation, 1 , 1 ),')') 
+select Concat(name,'(',SUBSTRING (occupation, 1 , 1 ),')')
 from occupations order by name asc
 select "There are a total of",count(*),concat(lower(occupation),'s','.')
- from occupations group by occupation order by count(*) asc
+from occupations group by occupation order by count(*) asc
 
 
 WITH DOCTOR AS (
@@ -121,7 +122,7 @@ select round(avg(population),1) from city;
 select sum(population) from city where countrycode = 'JPN'
 
 -- Subquery
-select max(population)- (select min(population) from city) from city 
+select max(population)- (select min(population) from city) from city
 
 select cast(
     ceiling(
@@ -132,16 +133,16 @@ select cast(
 from employees
 
 select max(months*salary), count(*)from
- employee group by months*salary desc limit 1
+employee group by months*salary desc limit 1
 
 select cast(round(sum(lat_n),2)AS DECIMAL(10,2)),
 cast(round(sum(long_w),2)AS DECIMAL(10,2))from station
 
 select Cast(Sum(lat_n) as Decimal(10,4)) from
- station where lat_n between 38.7880 and 137.2345
+station where lat_n between 38.7880 and 137.2345
 
 select cast(max(lat_n)as Decimal(10,4)) from
- station where lat_n <137.2345
+station where lat_n <137.2345
 
 select cast(max(long_w)as decimal(10,4)) from
  station where lat_n =(select max(lat_n) from station where lat_n<137.2345)
