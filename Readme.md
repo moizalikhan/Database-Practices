@@ -48,10 +48,26 @@
 
 ## Indexing:
 * a DS that you build on top of an existing table and it analyzes it and create shortcuts
-* Types: b tree and lsm
+* Types: b tree bitmap index and lsm
 * pk has btree index
 * if the data is in the index the query is fast
 * we go  to the page and read from disk
 * like is bad
 * btree -->bit map heap scan
-* 
+* inling --> multiple column index
+* explain analyaze command
+* seq table scan --> full table scan
+* bitmap index scan --> makes a bitmap and go back to the index and fetch those pages
+* key and non key index for efficient fetching 
+  * a non key one is that a index include some columns  in making a index but not include any keys from that columns
+  * vaccum verbose command for deleting dead rows and tables
+* Index scan --> go to the table
+* index only scan     
+* Composite index a and b it can uses when you search for a and when a and b
+* for b parallel seq scan
+* Some times dbs think it is great to use scan rather than indexes
+* Concurrent index creating
+* Bloom Filters:
+  * we create a 64 bit array and this contains 0s and 1s after that when a post request comes the payload is hashed and taken a mod of 64 and the result is between o and 63 and we make that bit 1 when a query ask is that particular letter exists we first hit the bit map sort of like strucutre first and check its hashed mod bit is 0 or 1 and it saves us the db queries and makes it fast and if all the bits became one then it ones use because your filter essentially everytime hits the db and its useless
+* One billion row table:
+  *  
