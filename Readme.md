@@ -70,4 +70,52 @@
 * Bloom Filters:
   * we create a 64 bit array and this contains 0s and 1s after that when a post request comes the payload is hashed and taken a mod of 64 and the result is between o and 63 and we make that bit 1 when a query ask is that particular letter exists we first hit the bit map sort of like strucutre first and check its hashed mod bit is 0 or 1 and it saves us the db queries and makes it fast and if all the bits became one then it ones use because your filter essentially everytime hits the db and its useless
 * One billion row table:
-  *  
+  *  google map reduce
+  *  indexing, Horizontal partitioning, sharding
+  *  DB design like has a column that has json as a data type
+*  Composite  index when it uses and
+*  index is sorted
+
+### Partitioning:
+* Break the table rows into multiple columns
+* Working with small set of data
+* Horizontal: spliting rows
+* vertical: splitting columns
+* Partitioning Types:
+  * By Data, List, Hash
+* Partitioning means split the tables but manage by same database--> schema changes
+* sharding means split the tables into multiple tables on different machines--> Schema remains same
+* if we want to create partitions on a particular table we create tables and attach those to the main table and create a index on the master table
+* we should enable partitioning pruning
+* sequencial scna and scattered index scan
+* Archieve old data on cheap hardware
+##### Disadvantages:
+* Update that move rows from a partition to another
+* inefficient queries make the result slow
+* Schema changes are difficult
+
+### Sharding:
+* shard key
+* Consistent hashing shards
+* Hash ring --> port
+* Implement by hashring library
+* Pros:
+  * Scalibilty
+  * security
+  * Small index size
+* Cons:
+  * Complex client
+  * Transacation across shards
+  * Rollbacks
+  * Schema changes
+  * Joins
+* In Real life last thing to do is sharding
+* Redis creates inconsistency
+* Replication --> master slave Reverse proxy
+* Logic in Client
+
+### Replication
+* write on master and read from slaves
+* Asynchronous and Synchronous Replication
+* Horizontal Scaling
+* Eventual Consistency
