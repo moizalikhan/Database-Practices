@@ -3,7 +3,7 @@
 -- Table: amazon_shipment
 -- shipment_id: int 
 -- sub_id: int 
--- weight: int 
+-- weight: int
 -- shipment_date: datetime
 SELECT CONCAT(YEAR(shipment_date), '-', MONTH(shipment_date)) AS year_month, COUNT(*) AS shipment_count
 FROM amazon_shipment
@@ -96,3 +96,11 @@ where R.reaction = 'heart';
 -- ID 10128
 -- Count the number of movies that Abigail Breslin was nominated for an oscar.
 select count(movie) as n_movies_by_abi from oscar_nominees where nominee = 'Abigail Breslin';
+
+
+-- ID 10061
+select location, ROUND(AVG(CAST(popularity AS FLOAT)), 2)
+from facebook_employees E
+inner join facebook_hack_survey S
+on E.id = S.employee_id
+group by location;
