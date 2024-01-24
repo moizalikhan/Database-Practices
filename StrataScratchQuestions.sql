@@ -26,7 +26,7 @@ ORDER BY YEAR(shipment_date), MONTH(shipment_date);
 -- rank: int
 -- forbeswebpage: varchar
 SELECT company, continent FROM forbes_global_2010_2014 WHERE sector ='Financials' 
-AND profits = (SELECT MAX(profits) FROM forbes_global_2010_2014
+AND profits = (SELECT MAX(profits) FROM forbes_global_2010_2014)
 
 
 -- Write a query that calculates the difference between the highest salaries found in the marketing and engineering departments. Output just the absolute difference in salaries.
