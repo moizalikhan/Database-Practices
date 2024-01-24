@@ -104,3 +104,22 @@ from facebook_employees E
 inner join facebook_hack_survey S
 on E.id = S.employee_id
 group by location;
+
+-- ID 10003
+select * from lyft_drivers 
+where yearly_salary <= 30000
+OR
+yearly_salary >= 70000;
+
+-- ID 9992
+select artist, count(artist) as occurrences from 
+spotify_worldwide_daily_song_ranking 
+group by artist
+Order by occurrences Desc;
+
+-- ID 9972
+select employeename, basepay from
+sf_public_salaries
+where jobtitle like 'CAPTAIN III (POLICE DEPARTMENT)';
+
+
