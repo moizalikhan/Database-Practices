@@ -130,5 +130,7 @@ airbnb_search_details
 group by city, property_type;
 
 -- ID 9845
-
+select count(worker_id)
+from worker
+where department = 'Admin' and joining_date > CONVERT(DATETIME, '2014-04-01');
 
