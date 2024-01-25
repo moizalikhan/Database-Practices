@@ -122,4 +122,13 @@ select employeename, basepay from
 sf_public_salaries
 where jobtitle like 'CAPTAIN III (POLICE DEPARTMENT)';
 
+-- ID 9622
+select city, property_type, avg(cast(bathrooms  as float)), 
+avg(cast(bedrooms  as float)) 
+from 
+airbnb_search_details
+group by city, property_type;
+
+-- ID 9845
+
 
