@@ -134,3 +134,16 @@ select count(worker_id)
 from worker
 where department = 'Admin' and joining_date > CONVERT(DATETIME, '2014-04-01');
 
+-- ID 9891
+select C.first_name, C.last_name, C.city, O.order_details
+from customers C
+full join orders O
+on C.id = O.cust_id
+order by C.first_name, O.order_details;
+
+-- ID 9847
+select department, count(worker_id) as 
+num_workers from worker 
+where month(joining_date) >= 4
+group by
+department order by num_workers desc;
