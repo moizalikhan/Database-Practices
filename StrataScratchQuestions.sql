@@ -147,3 +147,40 @@ num_workers from worker
 where month(joining_date) >= 4
 group by
 department order by num_workers desc;
+
+-- ID 9913
+select C.first_name, O.order_date,
+O.order_details, O.total_order_cost
+from customers C
+join orders O
+on C.id = O.cust_id
+where C.first_name in ('Jill','Eva')
+order by C.id;
+
+-- ID 9688
+select activity_date,pe_description from 
+los_angeles_restaurant_health_inspections
+where facility_name = 'STREET CHURROS' and score < 95;
+
+-- ID 9924
+select Distinct home_library_code from library_usage
+where circulation_active_year = '2016' and 
+notice_preference_definition = 'email' and
+provided_email_address = 'FALSE';
+
+-- ID 2119
+select top 5 product_id, sum(cost_in_dollars* units_sold) as revenue
+from online_orders
+where month('2022-01-01')>=1 and month('2022-06-30')<=6
+group by product_id
+order by revenue DESC;
+
+-- ID 2024
+SELECT client_id, MONTH(time_id) AS MonthOF, COUNT(Distinct user_id) AS CountOF
+FROM fact_events
+GROUP BY client_id, MONTH(time_id)
+ORDER BY MonthOF;
+
+-- Forgot the code to write down
+SELECT department, first_name, salary, AVG(salary) OVER (PARTITION BY department) AS dept_avg_sal
+FROM employee;
