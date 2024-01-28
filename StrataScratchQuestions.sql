@@ -184,3 +184,6 @@ ORDER BY MonthOF;
 -- Forgot the code to write down
 SELECT department, first_name, salary, AVG(salary) OVER (PARTITION BY department) AS dept_avg_sal
 FROM employee;
+
+
+-- #### Medium Level Questions
