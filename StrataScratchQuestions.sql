@@ -187,3 +187,29 @@ FROM employee;
 
 
 -- #### Medium Level Questions
+-- ID 10353
+Select worker_title from title T
+join worker W 
+on
+T.worker_ref_id = W.worker_id
+where salary = (Select max(salary) from worker)
+
+-- ID 10318
+WITH ProductCounts AS (
+    SELECT
+        company_name,
+        COUNT(DISTINCT CASE WHEN year = 2020 THEN product_name END) AS products_2020,
+        COUNT(DISTINCT CASE WHEN year = 2019 THEN product_name END) AS products_2019
+    FROM
+        car_launches
+    WHERE
+        year IN (2019, 2020)
+    GROUP BY
+        company_name
+)
+
+SELECT
+    company_name,
+    products_2020 - products_2019 AS net_products
+FROM
+    ProductCounts;
