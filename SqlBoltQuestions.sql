@@ -13,38 +13,29 @@ SELECT distinct title FROM movies order by title asc limit 5 offset 5;
 
 SELECT city, population FROM north_american_cities where country = 'Canada';
 SELECT city FROM north_american_cities where country = 'United States' order by latitude desc
-
 SELECT * from North_american_cities where Longitude < (select Longitude from North_american_cities where 
 city = "Chicago") order by longitude
-
 select city from North_american_cities 
 where country = "Mexico" order by population desc limit 2
-
 select city from North_american_cities 
 where country = "United States" order by population desc limit 2 offset 2
 
 SELECT title , Domestic_sales , International_sales FROM movies
 inner join Boxoffice on Movies.id = Boxoffice.Movie_id;
-
 SELECT title , Domestic_sales , International_sales FROM movies
 inner join Boxoffice on Movies.id = Boxoffice.Movie_id
 where International_sales > Domestic_sales;
-
 SELECT title, Rating FROM movies
 inner join Boxoffice on Movies.id = Boxoffice.Movie_id
 order by rating desc;
 
 
 SELECT DISTINCT building FROM employees;
--- 
 SELECT distinct Building_name from Buildings 
 right join Employees on Buildings.Building_name = Employees.Building;
-
 SELECT * FROM Buildings
-
 SELECT DISTINCT Building_name, Role FROM Buildings
 LEFT JOIN Employees ON Buildings.Building_name = Employees.Building
-
 SELECT Building_name FROM Buildings
 left join Employees on Buildings.Building_name = Employees.Building
 where building ISNULL;
