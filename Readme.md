@@ -27,7 +27,7 @@ All Triggers: Select \* from sys.objects where type='tr'
 ---
 
 Database:
-Normalization: atomic, no mulyiple columns, uses foriegn key, seprate table, 3nf(does not contain columns that do not depend upon pk)
+Normalization: atomic, no mulyiple values in a columns,no multiple columns, uses foriegn key, seprate table, 3nf(does not contain columns that do not depend upon pk)
 1nf to 3nf
 Orm: maps database tables to objects, model in sequliaze
 DDL: create, alter, drop
@@ -108,7 +108,7 @@ select e.name, m.name from emp e join emp m on e.depid = m.depid where e.id!= mm
 
 ---
 
-Rollbacks:
+Rollbacks:  
 Transaction Rollback:
 Rolling back a transaction ensures that changes made during the transaction are undone if an error occurs
 Savepoints:
@@ -300,82 +300,6 @@ Statistics(SQL Server generates them for indexed columns, Helps in creating effi
 Parameterize Queries:
 reuse execution plans
 Partition Large Tables:
-
----
-
-MongoDB:
-relations: Embedded Documents (Denormalization), Referencing (Normalization), Manual Joins(Aggregation Framework)
-Here are the **basics of MongoDB**, explained simply and concisely:
-
-### 1. **Document-Oriented Database**
-
-- **MongoDB** is a **NoSQL** database that stores data in **documents** (like JSON) instead of rows and columns.
-- Each document is a set of **key-value pairs**, and documents with similar structures are grouped into **collections**.
-
----
-
-### 2. **Schema Flexibility**
-
-- MongoDB is **schema-less**, meaning documents in the same collection don’t have to follow a strict structure.
-- You can have fields that vary between documents, which allows **flexibility** in how data is stored and updated.
-
----
-
-### 3. **Basic Data Types**
-
-- MongoDB supports common data types like **strings**, **numbers**, **arrays**, **dates**, and **objects**.
-- It also allows embedding documents within documents, which is useful for **nested data**.
-
----
-
-### 4. **CRUD Operations**
-
-- **Create**: Add a document to a collection using the `insertOne()` or `insertMany()` commands.
-- **Read**: Retrieve data with `find()`. Use queries to filter and project specific fields.
-- **Update**: Modify documents with `updateOne()`, `updateMany()`, or `replaceOne()`.
-- **Delete**: Remove documents using `deleteOne()` or `deleteMany()`.
-
----
-
-### 5. **Indexing**
-
-- **Indexes** in MongoDB improve query performance by speeding up searches on specific fields.
-- Use the `createIndex()` command to create indexes, but be mindful that **too many indexes can slow down writes**.
-
----
-
-### 6. **Replication**
-
-- MongoDB uses **replica sets** to provide **high availability**.
-- A replica set is a group of MongoDB instances with one **primary** node that handles writes, and **secondary** nodes that replicate data from the primary for **failover** in case the primary goes down.
-
----
-
-### 7. **Sharding**
-
-- **Sharding** is MongoDB’s method for scaling horizontally across multiple servers by splitting data into smaller chunks (shards).
-- This enables MongoDB to handle **large datasets** and **high traffic**.
-
----
-
-### 8. **Aggregation Framework**
-
-- The **aggregation framework** allows complex data processing operations like filtering, grouping, and transforming data.
-- Common stages include `$match` (filtering), `$group` (grouping data), and `$project` (reshaping data).
-
----
-
-### 9. **ACID Transactions**
-
-- **MongoDB** supports **multi-document ACID transactions**, ensuring that a group of operations either all succeed or all fail.
-- This is critical for scenarios where **data consistency** across multiple documents is required.
-
----
-
-### 10. **Security**
-
-- MongoDB provides security features like **authentication**, **authorization** (role-based access control), and **encryption** (TLS for data in transit, encryption at rest).
-- Use **MongoDB Atlas** for cloud-hosted MongoDB instances with built-in security and monitoring.
 
 =================================================================================
 Here’s a simple and concise comparison between **SQL Server** and **MongoDB**:
@@ -965,3 +889,80 @@ Here are the key concepts of **database security**, **backup**, **recovery**, an
   - what kind of properties this thing have
   - what type of data does each of those properties contain.
 -
+
+
+---
+
+MongoDB:
+relations: Embedded Documents (Denormalization), Referencing (Normalization), Manual Joins(Aggregation Framework)
+Here are the **basics of MongoDB**, explained simply and concisely:
+
+### 1. **Document-Oriented Database**
+
+- **MongoDB** is a **NoSQL** database that stores data in **documents** (like JSON) instead of rows and columns.
+- Each document is a set of **key-value pairs**, and documents with similar structures are grouped into **collections**.
+
+---
+
+### 2. **Schema Flexibility**
+
+- MongoDB is **schema-less**, meaning documents in the same collection don’t have to follow a strict structure.
+- You can have fields that vary between documents, which allows **flexibility** in how data is stored and updated.
+
+---
+
+### 3. **Basic Data Types**
+
+- MongoDB supports common data types like **strings**, **numbers**, **arrays**, **dates**, and **objects**.
+- It also allows embedding documents within documents, which is useful for **nested data**.
+
+---
+
+### 4. **CRUD Operations**
+
+- **Create**: Add a document to a collection using the `insertOne()` or `insertMany()` commands.
+- **Read**: Retrieve data with `find()`. Use queries to filter and project specific fields.
+- **Update**: Modify documents with `updateOne()`, `updateMany()`, or `replaceOne()`.
+- **Delete**: Remove documents using `deleteOne()` or `deleteMany()`.
+
+---
+
+### 5. **Indexing**
+
+- **Indexes** in MongoDB improve query performance by speeding up searches on specific fields.
+- Use the `createIndex()` command to create indexes, but be mindful that **too many indexes can slow down writes**.
+
+---
+
+### 6. **Replication**
+
+- MongoDB uses **replica sets** to provide **high availability**.
+- A replica set is a group of MongoDB instances with one **primary** node that handles writes, and **secondary** nodes that replicate data from the primary for **failover** in case the primary goes down.
+
+---
+
+### 7. **Sharding**
+
+- **Sharding** is MongoDB’s method for scaling horizontally across multiple servers by splitting data into smaller chunks (shards).
+- This enables MongoDB to handle **large datasets** and **high traffic**.
+
+---
+
+### 8. **Aggregation Framework**
+
+- The **aggregation framework** allows complex data processing operations like filtering, grouping, and transforming data.
+- Common stages include `$match` (filtering), `$group` (grouping data), and `$project` (reshaping data).
+
+---
+
+### 9. **ACID Transactions**
+
+- **MongoDB** supports **multi-document ACID transactions**, ensuring that a group of operations either all succeed or all fail.
+- This is critical for scenarios where **data consistency** across multiple documents is required.
+
+---
+
+### 10. **Security**
+
+- MongoDB provides security features like **authentication**, **authorization** (role-based access control), and **encryption** (TLS for data in transit, encryption at rest).
+- Use **MongoDB Atlas** for cloud-hosted MongoDB instances with built-in security and monitoring.
