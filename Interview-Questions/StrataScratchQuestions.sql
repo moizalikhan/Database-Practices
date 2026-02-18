@@ -495,3 +495,19 @@ join After_Interval_Day_of_users t2
 on t1.entry_date=t2.INTIAL_DATE
 group by t1.entry_date, countofusrs
 order by t1.entry_date
+
+------------------------------------------
+-- -- ID 2102
+-- For each video, find how many unique users flagged it.
+-- A unique user can be identified using the combination of their first name and last name.
+-- Do not consider rows in which there is no flag ID.
+---count
+select video_id,
+count( DISTINCT (user_firstname, user_lastname )) as Unique_Users
+from user_flags
+where
+-- user_firstname <> '' and user_lastname <> ''
+flag_id <> ''
+-- and video_id='dQw4w9WgXcQ'
+group by video_id
+order by video_id
