@@ -511,3 +511,76 @@ flag_id <> ''
 -- and video_id='dQw4w9WgXcQ'
 group by video_id
 order by video_id
+
+-----------------------------------------
+-- ID 2104
+-- Which user flagged the most distinct videos that ended up approved by YouTube? Output,
+-- in one column, their full name or names in case of a tie.
+-- In the user's full name, include a space between the first and the last name.
+-- Tables
+-- user_flags
+-- flag_review
+SELECT
+    CONCAT(UF.user_firstname,' ',UF.user_lastname) AS username
+FROM user_flags UF
+RIGHT JOIN flag_review FR
+    ON UF.flag_id = FR.flag_id
+WHERE
+    UF.video_id <> ''
+    AND UF.flag_id <> ''
+    AND FR.reviewed_outcome = 'APPROVED'
+GROUP BY UF.user_firstname, UF.user_lastname
+HAVING COUNT(DISTINCT UF.video_id) = (
+    SELECT MAX(Records)
+    FROM (
+SELECT COUNT(DISTINCT UF.video_id) AS Records
+FROM user_flags UF
+RIGHT JOIN flag_review FR
+ON UF.flag_id = FR.flag_id
+WHERE
+UF.video_id <> ''
+AND UF.flag_id <> ''
+AND FR.reviewed_outcome = 'APPROVED'
+GROUP BY UF.user_firstname, UF.user_lastname
+)
+)
+order by UF.user_firstname,UF.user_lastname
+
+----------------------------
+-- ID 10318
+-- Calculate the net change in the number of products launched by companies in 2020 compared to 2019. Your output should include the company names and the net difference.
+-- (Net difference = Number of products launched in 2020 - The number launched in 2019.)
+--
+-- Table
+-- car_launches
+WITH ProductCounts AS (
+    SELECT
+        company_name,
+        COUNT(DISTINCT CASE WHEN year = 2020 THEN product_name END) AS products_2020,
+        COUNT(DISTINCT CASE WHEN year = 2019 THEN product_name END) AS products_2019
+    FROM
+        car_launches
+    WHERE
+        year IN (2019, 2020)
+    GROUP BY
+        company_name
+)
+SELECT
+    company_name,
+    products_2020 - products_2019 AS net_products
+FROM
+    ProductCounts;
+
+---------------------------------
+-- Calculate the total revenue from each customer in March 2019.
+-- Include only customers who were active in March 2019.
+-- An active user is a customer who made at least one transaction in March 2019.
+-- Output the revenue along with the customer id
+-- and sort the results based on the revenue in descending order.
+-- Table
+-- orders
+
+select cust_id,sum(total_order_cost) as total_revenue from orders
+where extract(month from order_date) = 3
+group by cust_id
+order by cust_id;
