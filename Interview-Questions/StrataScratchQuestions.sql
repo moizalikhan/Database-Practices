@@ -584,3 +584,23 @@ select cust_id,sum(total_order_cost) as total_revenue from orders
 where extract(month from order_date) = 3
 group by cust_id
 order by cust_id;
+
+---------------------------------------
+-- ID 10049
+-- Calculate number of reviews for every business category.
+-- Output the category along with the total number of reviews.
+-- Order by total reviews in descending order.
+-- Table
+-- yelp_business
+with categories_after_transformation as (
+select
+trim(unnest(string_to_array(categories,';'))) as categories,
+review_count
+from yelp_business
+)
+select categories,sum(review_count) as Count_of_reviews
+from categories_after_transformation
+group by categories order by Count_of_reviews DESC
+
+---------------------------------------
+-- ID 10352
