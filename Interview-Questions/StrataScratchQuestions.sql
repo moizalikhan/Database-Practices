@@ -604,3 +604,39 @@ group by categories order by Count_of_reviews DESC
 
 ---------------------------------------
 -- ID 10352
+-- Calculate each user's average session time,
+-- where a session is defined as the time difference
+-- between a page_load and a page_exit.
+-- Assume each user has only one session per day.
+-- If there are multiple page_load or page_exit events on the same day,
+-- use only the latest page_load and the earliest page_exit.
+-- Only consider sessions where the page_load occurs before
+-- the page_exit on the same day.
+-- Output the user_id and their average session time.
+-- Table
+-- facebook_web_log
+with Session_start as(
+select
+user_id,max(timestamp) as sessionstart_timestamp
+from facebook_web_log
+where
+action='page_load'
+group by timestamp::date,user_id
+order by user_id
+),
+Session_end as (
+select
+user_id,min(timestamp) as sessionend_timestamp
+from facebook_web_log
+where
+action='page_exit'
+group by timestamp::date,user_id
+order by user_id
+)
+select S.user_id,AVG(E.sessionend_timestamp-S.sessionstart_timestamp)
+as avg_session_duration from Session_start S
+inner Join Session_end E
+on S.user_id=E.user_id and
+S.sessionstart_timestamp::date = E.sessionend_timestamp::date
+where S.sessionstart_timestamp<=E.sessionend_timestamp
+group by S.user_id
