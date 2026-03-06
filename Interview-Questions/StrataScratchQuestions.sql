@@ -640,3 +640,45 @@ on S.user_id=E.user_id and
 S.sessionstart_timestamp::date = E.sessionend_timestamp::date
 where S.sessionstart_timestamp<=E.sessionend_timestamp
 group by S.user_id
+
+-------------------------------
+-- ID 10300
+-- Find the total number of downloads for paying and non-paying users by date.
+-- Include only records where non-paying customers have more downloads than paying customers.
+-- The output should be sorted by earliest date first and contain 3 columns date,
+-- non-paying downloads, paying downloads.
+-- Hint: In Oracle you should use "date" when referring to date column (reserved keyword).
+-- Tables
+-- ms_user_dimension
+-- ms_acc_dimension
+-- ms_download_facts
+
+With All_Records as (
+select D.date, D.downloads, D.user_id, U.acc_id, A.paying_customer
+from ms_download_facts D
+inner join ms_user_dimension U
+on D.user_id = U.user_id
+inner join ms_acc_dimension A
+on A.acc_id = U.acc_id
+order by D.date
+),
+Paying_Cus as (
+select date,sum(downloads) as paying
+from All_Records where paying_customer='yes'
+group by date
+order by date
+),
+Non_Paying_Cus as (
+select date,sum(downloads) as non_paying
+from All_Records where paying_customer='no'
+group by date
+order by date
+)
+select
+PC.date as download_date,
+NP.non_paying,
+PC.paying
+from Paying_Cus PC
+inner join Non_Paying_Cus NP
+on PC.date = NP.date
+where NP.non_paying > PC.paying
