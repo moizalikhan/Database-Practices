@@ -682,3 +682,33 @@ from Paying_Cus PC
 inner join Non_Paying_Cus NP
 on PC.date = NP.date
 where NP.non_paying > PC.paying
+
+
+----------------------------
+-- ID 9915
+-- Find the customers with the highest daily total order cost between 2019-02-01 and 2019-05-01.
+-- If a customer had more than one order on a certain day, sum the order costs on a daily basis.
+-- Output each customers first name, total cost of their items, and the date.
+-- If multiple customers tie for the highest daily total on the same date, return all of them.
+-- For simplicity, you can assume that every first name in the dataset is unique.
+-- Tables
+-- customers
+-- orders
+with daily_cost as
+(
+select C.first_name,O.order_date,sum(O.total_order_cost) as cost_of_orders
+from customers C
+inner join orders O
+on C.id = O.cust_id
+where O.order_date between '2019-02-01' and '2019-05-01'
+group by O.order_date, C.first_name
+),
+daily_max as
+(
+select order_date, max(cost_of_orders) as daily_maxcost from daily_cost
+group by order_date
+)
+select DC.first_name,DC.order_date,DC.cost_of_orders  from daily_cost DC
+inner join daily_max DM
+on DC.order_date = DM.order_date
+and DC.cost_of_orders = DM.daily_maxcost
