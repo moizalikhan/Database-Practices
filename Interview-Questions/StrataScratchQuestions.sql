@@ -712,3 +712,25 @@ select DC.first_name,DC.order_date,DC.cost_of_orders  from daily_cost DC
 inner join daily_max DM
 on DC.order_date = DM.order_date
 and DC.cost_of_orders = DM.daily_maxcost
+
+------------------
+-- ID 10183
+-- Find the total cost of each customer's orders.'
+-- Output customer's id, first name, and the total order cost. Order records by customer's first name alphabetically.
+-- Tables: customers, orders
+--
+select O.cust_id, C.first_name, sum(total_order_cost) from customers C
+inner join orders O
+on C.id = O.cust_id
+group by O.cust_id, C.first_name
+order by C.first_name
+
+---------------------
+-- ID 10127
+-- What is the total sales revenue of Samantha and Lisa?
+-- Table: sales_performance
+SELECT
+SUM(sales_revenue) AS "sales revenue"
+FROM sales_performance
+WHERE salesperson IN ('Samantha','Lisa')
+
