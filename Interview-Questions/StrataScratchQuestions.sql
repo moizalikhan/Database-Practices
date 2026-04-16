@@ -203,10 +203,12 @@ group by location;
 -- Write a query that will calculate the number of shipments per month. The unique key for one shipment is a combination of shipment_id and sub_id. Output the year_month in format YYYY-MM and the number of shipments in that month.
 -- Table
 -- amazon_shipment
-SELECT CONCAT(YEAR(shipment_date), '-', MONTH(shipment_date)) AS year_month, COUNT(*) AS shipment_count
+SELECT
+    TO_CHAR(shipment_date, 'YYYY-MM') AS year_month,
+    COUNT(*) AS shipment_count
 FROM amazon_shipment
-GROUP BY YEAR(shipment_date), MONTH(shipment_date)
-ORDER BY YEAR(shipment_date), MONTH(shipment_date);
+GROUP BY year_month
+ORDER BY year_month;
 
 ----------------------------------------------------------------------------
 -- ID 9653
@@ -296,20 +298,21 @@ order by C.first_name, O.order_details;
 -- Tables
 -- worker
 -- title
-Select worker_title from title T
-join worker W
-on
-T.worker_ref_id = W.worker_id
-where salary = (Select max(salary) from worker)
+SELECT T.worker_title
+FROM worker W
+JOIN title T ON W.worker_id = T.worker_ref_id
+ORDER BY W.salary DESC
+LIMIT 2;
 
 -----------------------------------------------------------------------------------
 -- ID 9845
 -- Find the number of employees working in the Admin department that joined in April or later, in any year.
 -- Table
 -- worker
-select count(worker_id)
-from worker
-where department = 'Admin' and joining_date > CONVERT(DATETIME, '2014-04-01');
+SELECT COUNT(worker_id)
+FROM worker
+WHERE department = 'Admin'
+  AND joining_date > DATE '2014-04-01';
 
 ------------------------------------------------------------------------------------
 -- ID 9847
@@ -374,10 +377,14 @@ DESC;
 -- We have a table with employees and their salaries, however, some of the records are old and contain outdated salary information. Find the current salary of each employee assuming that salaries increase each year. Output their id, first name, last name, department ID, and current salary. Order your list by employee ID in ascending order.
 -- Table
 -- ms_employee_salary
-select id, first_name, last_name,department_id, max(salary) from ms_employee_salary
-group by id, first_name, last_name, department_id
-order by
-id asc;
+-- select * from ms_employee_salary
+with ID_Based_Max_Salary as (
+select id,first_name,last_name,department_id,salary,
+Row_number() over (partition by id order by salary desc) as Ranked_Rows
+from ms_employee_salary
+)
+select id,first_name,last_name,department_id,salary from ID_Based_Max_Salary where
+ID_Based_Max_Salary.Ranked_Rows=1
 
 ----------------------------------------------------
 -- ID 9917
