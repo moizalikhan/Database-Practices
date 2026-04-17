@@ -741,3 +741,234 @@ SUM(sales_revenue) AS "sales revenue"
 FROM sales_performance
 WHERE salesperson IN ('Samantha','Lisa')
 
+-----------------------
+-- ID 10130
+-- Find the number of inspections that resulted in each risk category per each inspection type.
+-- Consider the records with no risk category value belongs to a separate category.
+-- Output the result along with the corresponding inspection type and the corresponding total number of inspections per that type. The output should be pivoted, meaning that each risk category + total number should be a separate column.
+-- Order the result based on the number of inspections per inspection type in descending order.
+-- Table
+-- sf_restaurant_health_violations
+with inspections_summary as (
+select inspection_type,
+sum(CASE when risk_category IS NULL Then 1 ELSE 0 END) as no_risk_results,
+sum(CASE when risk_category='Low Risk' Then 1 ELSE 0 END) as low_risk_results,
+sum(CASE when risk_category='Moderate Risk' Then 1 ELSE 0 END) as medium_risk_results,
+sum(CASE when risk_category='High Risk' Then 1 ELSE 0 END) as high_risk_results,
+count(*) as total_inspections
+From sf_restaurant_health_violations
+Group by inspection_type
+)
+select * from inspections_summary order by total_inspections DESC
+
+------------------------------
+-- ID 9881
+-- Make a report showing the number of survivors and non-survivors by passenger class. Classes are categorized based on the pclass value as:
+-- •	First class: pclass = 1
+-- •	Second class: pclass = 2
+-- •	Third class: pclass = 3
+-- Output the number of survivors and non-survivors by each class.
+--
+-- Table
+-- titanic
+-- with Survivors as (
+-- select pclass,count(*) as Survivors_Count from titanic where survived=1 group by pclass),
+-- Non_Survivors as (
+-- select pclass,count(*) as Non_Survivors_Count from titanic where survived=0 group by pclass)
+-- select
+select survived,
+Count (*) Filter (where pclass=1 ) as first_class,
+Count (*) Filter (where pclass=2 ) as second_class,
+Count (*) Filter (where pclass=3 ) as third_class
+from titanic
+group by survived
+
+---------------------------
+-- ID 9894
+-- Find employees who are earning more than their managers. Output the employee's first name along with the corresponding salary.
+-- Table
+-- employee
+select E.first_name,E.salary
+from employee E
+inner join employee M
+on E.manager_id = M.id
+where E.salary > M.salary
+
+-------------------------------
+-- ID 9897
+-- Find the employee with the highest salary per department.
+-- Output the department name, employee's first name along with the corresponding salary.
+-- Table
+-- employee
+WITH salaries_based_on_departments AS (
+    SELECT department, MAX(salary) AS max_salary
+    FROM employee
+    GROUP BY department
+)
+SELECT S.department, E.first_name, S.max_salary
+FROM salaries_based_on_departments S
+JOIN employee E
+  ON S.department = E.department
+ AND S.max_salary = E.salary
+ORDER BY S.department;
+
+-----------------------
+-- ID 9905
+-- Identify the employee(s) working under manager manager_id=13 who have achieved the highest target. Return each such employee’s first name alongside the target value. The goal is to display the maximum target among all employees under manager_id=13 and show which employee(s) reached that top value.
+-- Table
+-- salesforce_employees
+with Max_salaries as (
+select manager_id, max(target) as Max_salary from salesforce_employees
+where manager_id=13
+group by manager_id
+)
+select S.first_name,M.Max_salary from Max_salaries M
+join salesforce_employees S
+on M.manager_id = S.manager_id and
+M.Max_salary = S.target
+
+----------------------------
+-- ID 10078
+-- Find matching hosts and guests pairs in a way that they are both of the same gender and nationality.
+-- Output the host id and the guest id of matched pair.
+-- Tables
+-- airbnb_hosts
+-- airbnb_guests
+with airbnb_hosts_id as (
+select distinct host_id, nationality, gender from airbnb_hosts
+),
+airbnb_guests_id as (
+select distinct guest_id, nationality, gender from airbnb_guests)
+select H.host_id, G.guest_id from airbnb_hosts_id H
+inner join airbnb_guests_id G
+on H.nationality = G.nationality and
+H.gender = G.gender
+order by H.host_id ASC
+
+-------------------------------
+-- ID 10085
+-- Find matching pairs of Meta/Facebook employees such that they are both of the same nation, different age, same gender, and at different seniority levels.
+-- Output ids of paired employees.
+-- Table
+-- facebook_employees
+select
+E1.id as employee_1, E2.id as employee_2
+-- ,E1.location, E1.age
+from facebook_employees E1
+inner join facebook_employees E2
+on E1.location = E2.location and
+E1.gender = E2.gender
+where E1.is_senior != E2.is_senior
+order by E1.location ASC;
+
+----------------------------------
+-- ID 9856
+-- Find employees who earn the same salary.
+-- Output the worker id along with the first name and the salary in descending order.
+-- Table
+-- worker
+select W1.worker_id,W1.first_name,W1.salary
+from worker W1
+inner join worker W2
+on W1.salary = W2.salary
+where W1.worker_id != W2.worker_id
+order by W1.salary DESC;
+
+------------------------------------
+-- ID 9858
+-- Generate a list of employees who work in the HR department, including only their first names and department in the output. Each employee should appear twice in the list, meaning their first name and department should be duplicated in the output.
+-- Table
+-- worker
+select first_name, department from worker
+where department='HR'
+Union All
+select first_name, department from worker
+where department='HR';
+
+------------------------------------
+-- ID 9892
+-- Find the second highest salary of employees.
+-- Table
+-- employee
+select salary from employee
+where salary < (select max(salary) from employee)
+order by salary DESC
+limit 1 ;
+
+--------------------------------------
+-- ID 10090
+-- Find the percentage of shipable orders.
+-- Consider an order is shipable if the customer's address is known.
+-- Tables
+-- orders
+-- customers
+with Total_order as (
+select count(*) as Total_order_count
+from orders O
+inner join customers C
+on O.cust_id = C.id
+),
+shipable_ones as (
+select count(*) as shipable_order_count
+from orders O
+inner join customers C
+on O.cust_id = C.id
+where C.address is Not NULL
+)
+select (shipable_ones.shipable_order_count::float/Total_order.Total_order_count::float)*100 as percent_shipable from shipable_ones, Total_order
+
+--------------------------------------
+-- ID 10322
+-- Identify returning active users by finding users who made a second purchase within 1 to 7 days after their first purchase. Ignore same-day purchases. Output a list of these user_ids.
+--
+-- Table
+-- amazon_transactions
+with Customers_Based_Date as (
+    select *,
+           row_number() over (partition by user_id order by created_at) as rn
+    from amazon_transactions
+)
+select distinct c1.user_id
+from Customers_Based_Date c1
+join Customers_Based_Date c2
+  on c1.user_id = c2.user_id
+where c1.rn = 1
+  and c2.rn = 2
+  and (c2.created_at - c1.created_at) > 0
+  and (c2.created_at - c1.created_at) <=7
+
+--------------------------------------
+-- ID 10156
+-- Write a query that returns how many different apartment-type units (counted by distinct unit_id) are owned by people under 30, grouped by their nationality. Sort the results by the number of apartments in descending order.
+-- Tables
+-- airbnb_hosts
+-- airbnb_units
+select nationality,count (distinct unit_id) as apartment_count
+from airbnb_hosts H
+inner join airbnb_units U
+on H.host_id = U.host_id
+where H.age<30 and unit_type='Apartment'
+group by nationality
+order by apartment_count DESC
+
+--------------------------------------
+-- ID 10285
+-- Calculate the friend acceptance rate for each date when friend requests were sent. A request is sent if action = sent and accepted if action = accepted. If a request is not accepted, there is no record of it being accepted in the table.
+-- The output will only include dates where requests were sent and at least one of them was accepted (acceptance can occur on any date after the request is sent).
+-- Table
+-- fb_friend_requests
+with Send_CTE as (
+select date as send_date, user_id_receiver, user_id_sender from fb_friend_requests
+where action='sent'
+),
+Accp_CTE as (
+select date as acceptance_date, user_id_receiver, user_id_sender from fb_friend_requests
+where action='accepted'
+)
+select S.send_date, Count(A.user_id_receiver)/Cast(Count(S.user_id_receiver) as decimal) as percentage_acceptance
+from Send_CTE S
+Left Join Accp_CTE A
+on S.user_id_receiver= A.user_id_receiver
+Group By S.send_date
+
+--------------------------------------
