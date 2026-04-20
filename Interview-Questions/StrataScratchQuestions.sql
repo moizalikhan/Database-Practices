@@ -1001,3 +1001,58 @@ group by id_guest
 select D1.number as number1, D2.number as number2,GREATEST(D1.number,D2.number) as max_number 
 from deloitte_numbers D1
 cross join deloitte_numbers D2;
+
+-----------------------------------------
+-- ID 2110
+-- Write a query to get the list of managers whose salary
+-- is less than twice the average salary of employees reporting
+-- to them.
+-- For these managers, output their ID, salary and the average salary
+-- of employees reporting to them.
+-- Tables
+-- map_employee_hierarchy
+-- dim_employee
+with Employee_Salary as (
+select M.manager_empl_id, AVG(D.salary) as avg_employee_salary
+from map_employee_hierarchy M
+inner join dim_employee D
+on M.empl_id = D.empl_id
+group by M.manager_empl_id
+),
+Manager_Salary as (
+select DISTINCT M.manager_empl_id, D.salary as manager_salary
+from map_employee_hierarchy M
+Inner join dim_employee D
+on M.manager_empl_id = D.empl_id
+)
+select
+ES.manager_empl_id,MS.manager_salary,ES.avg_employee_salary
+from Employee_Salary ES
+inner join Manager_Salary MS
+on ES.manager_empl_id = MS.manager_empl_id
+WHERE MS.manager_salary < 2 * ES.avg_employee_salary;
+
+--------------------------------------
+-- ID 10553
+-- Identify returning active users by
+-- finding users who made a repeat purchase within
+-- 7 days or less of their previous transaction,
+-- excluding same-day purchases. Output a list of these user_id.
+-- Table
+-- amazon_transactions
+With Initial_Transactions as (
+select user_id, created_at,
+ROW_NUMBER() OVER (partition BY user_id order by created_at) as Ranking
+from amazon_transactions
+)
+select
+distinct IT.user_id
+-- ,IT.created_at as initial_transaction_date, IT.ranking,
+-- ST.created_at as second_transaction_date, ST.ranking
+from Initial_Transactions IT
+inner join Initial_Transactions ST
+on IT.user_id = ST.user_id
+where ST.ranking = IT.ranking+1
+AND (ST.created_at::date - IT.created_at::date) <= 7
+AND (ST.created_at::date - IT.created_at::date) >= 1
+order by IT.user_id ASC
