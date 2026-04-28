@@ -1068,3 +1068,206 @@ select distinct year_rank,group_name,song_name from billboard_top_100_year_end
 where year='2010'
 order by year_rank ASC
 limit 10;
+
+---------------------------------------
+-- ID 10304
+-- You are given a set of projects and employee data.
+-- Each project has a name, a budget, and a specific duration,
+-- while each employee has an annual salary and may be assigned
+-- to one or more projects for particular periods.
+-- The task is to identify which projects are overbudget.
+-- A project is considered overbudget if the prorated cost of all
+-- employees assigned to it exceeds the project’s budget.
+--
+-- To solve this, you must prorate each employees
+-- annual salary based on the exact period they work on a
+-- given project, relative to a full year.
+-- For example, if an employee works on a six-month project,
+-- only half of their annual salary should be attributed to that project.
+-- Sum these prorated salary amounts for all employees assigned to a
+-- project and compare the total with the project’s budget.
+--
+--
+-- Your output should be a list of overbudget projects,
+-- where each entry includes the project’s name, its budget,
+-- and the total prorated employee expenses for that project.
+-- The total expenses should be rounded up to the nearest dollar.
+-- Assume all years have 365 days and disregard leap years.
+--
+-- Tables
+-- linkedin_projects
+-- linkedin_emp_projects
+-- linkedin_employees
+--------------------------
+select
+LP.title, LP.budget,
+ceiling( (SUM (LE.salary * (LP.end_date::date - LP.start_date::date)::decimal/365))) as prorated_employee_expense
+from linkedin_projects LP
+inner join linkedin_emp_projects EP
+on LP.id = EP.project_id
+inner join linkedin_employees LE
+on EP.emp_id = LE.id
+GROUP BY LP.title, LP.budget
+having LP.budget < ceiling( (SUM (LE.salary * (LP.end_date::date - LP.start_date::date)::decimal/365)))
+order by LP.title ASC
+
+---------------------------------------
+-- ID 2170
+-- The workforce planning team is analyzing
+-- department growth since the companys expansion,
+-- focusing on teams that have grown substantially.
+--
+-- For each department with 5 or more employees hired after
+-- 2020, return the name, headcount, total payroll,
+-- and average salary.
+--
+-- Table
+-- techcorp_workforce
+select
+department , count(*) as headcount,
+sum(salary) as total_payroll, SUM(salary) / COUNT(*) as average_salary
+from techcorp_workforce
+where EXTRACT(YEAR FROM joining_date) > 2020
+group by department
+having count(*)>5
+
+---------------------------------------
+-- ID 2172
+-- The marketing team wants to identify high-value
+-- customers for a premium loyalty program.
+-- Find all customers who have placed at least one order over $100.
+-- Return customer ID and name.
+--
+-- Tables
+-- online_store_customers
+-- online_store_orders
+select DISTINCT SC.customer_id, SC.customer_name from online_store_customers SC
+inner join online_store_orders SO
+on SC.customer_id = So.customer_id
+where SO.amount>100
+order by SC.customer_id ASC;
+
+---------------------------------------
+-- ID 10025
+-- Find all possible varieties which occur in either of the winemag datasets.
+-- Output unique variety values only.
+-- Sort records based on the variety in ascending order.
+--
+-- Tables
+-- winemag_p1
+-- winemag_p2
+select variety from winemag_p1
+Union
+select variety from winemag_p2
+order by variety ASC
+
+---------------------------------------
+-- ID 10048
+-- Find the top 5 businesses with most reviews.
+-- Assume that each row has a unique
+-- business_id such that the total reviews for each
+-- business is listed on each row.
+-- Output the business name along with the total number
+-- of reviews and order your results by the total reviews
+-- in descending order.
+--
+-- If there are ties in review counts,
+-- businesses with the same number of reviews receive
+-- the same rank, and subsequent ranks are
+-- skipped accordingly (e.g., if two businesses
+-- tie for rank 4, the next business receives rank 6,
+-- skipping rank 5).
+--
+-- Table
+-- yelp_business
+select name,sum(review_count) as review_count from yelp_business
+group by name
+order by review_count DESC
+limit 5
+
+---------------------------------------
+-- ID 9781
+-- Find the processed rate of tickets for each type.
+-- The processed rate is defined as the number of processed tickets
+-- divided by the total number of tickets for that type.
+-- Round this result to two decimal places.
+-- Table
+-- facebook_complaints
+select type,
+round(
+(
+    (count(*) filter(where processed=true))::decimal/count(*)
+),2
+)
+as processed_rate from facebook_complaints
+group by type;
+
+---------------------------------------
+-- ID 9813
+-- Make the friends network symmetric.
+-- For example, if 0 and 1 are friends,
+-- have the output contain both 0 and 1 under 1 and 0 respectively.
+-- Table
+-- google_friends_network
+SELECT distinct user_id, friend_id
+FROM google_friends_network
+union
+SELECT friend_id as user_id, user_id as friend_id
+FROM google_friends_network
+order by user_id;
+
+---------------------------------------
+-- ID 9817
+-- Find the number of times each word appears in the contents column
+-- across all rows in the google_file_store dataset.
+-- Output two columns: word and occurrences.
+--
+-- Table
+-- google_file_store
+
+with cleaned_words as
+(
+select
+lower(
+unnest
+(
+string_to_array
+(
+regexp_replace(contents,'[[:punct:]]','','g')
+,' '
+)
+)
+)
+as word
+from google_file_store
+-- where filename like '%draft%'
+)
+select cleaned_words.word,count(word) as counted_words from cleaned_words
+group by cleaned_words.word
+order by counted_words DESC
+
+---------------------------------------
+-- ID 10077
+-- Find the average total compensation based on employee titles and gender.
+-- Total compensation is calculated by adding both the salary and bonus of each employee.
+-- However, not every employee receives a bonus so disregard employees without bonuses in
+-- your calculation. Employee can receive more than one bonus.
+-- Output the employee title, gender (i.e., sex), along with the average total compensation.
+--
+-- Tables
+-- sf_employee
+-- sf_bonus
+with Employee_Bonus_data as
+(
+select
+B.worker_ref_id, sum(B.bonus) as bonus_sum
+from sf_bonus B
+group by B.worker_ref_id
+order by B.worker_ref_id
+)
+select
+E.employee_title, E.sex, AVG(E.salary + B.bonus_sum) as avg_compensation
+from sf_employee E
+inner join Employee_Bonus_data B on
+E.id = B.worker_ref_id
+group by E.employee_title, E.sex
