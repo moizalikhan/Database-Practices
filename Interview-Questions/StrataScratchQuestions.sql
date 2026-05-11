@@ -1271,3 +1271,154 @@ from sf_employee E
 inner join Employee_Bonus_data B on
 E.id = B.worker_ref_id
 group by E.employee_title, E.sex
+
+---------------------------------------
+-- ID 10319
+--
+-- Given a table of purchases by date, calculate the
+-- month-over-month percentage change in revenue.
+-- The output should include the year-month date (YYYY-MM)
+--  and percentage change, rounded to the 2nd decimal point,
+-- and sorted from the beginning of the year to
+-- the end of the year.
+-- The percentage change column will be populated
+-- from the 2nd month forward and can be calculated as
+-- ((this month's revenue - last month's revenue)
+-- / last month's revenue)*100.
+--
+-- Table
+-- sf_transactions
+-- percentage change: start from second month,
+-- percentage change: (month this moth revenue - last month revencue/last month revencue) * 100
+-- output each month, percentage change::decimla,2 , order by month,
+With Month_Over_Data as
+(
+select to_char(created_at,'YYYY-MM') as year_month,
+sum(value) as month_revenue_sum
+from sf_transactions
+group by to_char(created_at,'YYYY-MM')
+order by to_char(created_at,'YYYY-MM') ASC
+)
+select
+year_month,
+(month_revenue_sum - LAG(month_revenue_sum) OVER (ORDER BY year_month)
+)/(LAG(month_revenue_sum) OVER (ORDER BY year_month)) *100 as revenue_diff_pct
+from Month_Over_Data
+
+---------------------------------------
+-- ID 2054
+-- Find all the users who were active for 3 consecutive days or more.
+-- Table
+-- sf_events
+With Days_Calculated as (
+select
+user_id, record_date,
+Lead(record_date,1) over (partition by user_id order by record_date ASC) as Next_day,
+Lead(record_date,2) over (partition by user_id order by record_date ASC) as Day_After_Next_day
+from sf_events
+)
+select * from Days_Calculated
+where (Next_day - record_date) = 1
+and (Day_After_Next_day - record_date) = 2
+
+---------------------------------------
+-- ID 10172
+-- Find the best-selling item for each month
+-- (no need to separate months by year).
+-- The best-selling item is determined by the highest total sales amount,
+-- calculated as:
+-- total_paid = unitprice * quantity.
+-- A negative quantity indicates a return or
+-- cancellation (the invoice number begins with 'C'.
+-- To calculate sales, ignore returns and cancellations.
+-- Output the month, description of the item, and the total amount paid.
+-- Table
+-- online_retail
+with sales_data as (
+select
+to_char(invoicedate,'FMMM') as month,
+description,
+sum( quantity * unitprice ) as total_paid,
+ROW_NUMBER() OVER
+(partition by to_char(invoicedate,'FMMM')
+order by sum( quantity * unitprice ) DESC)
+as Ranked_data
+from online_retail
+where quantity >0
+and invoiceno not like 'C%'
+group by  to_char(invoicedate,'FMMM'),
+description
+)
+select SD.month, SD.description, SD.total_paid from sales_data SD
+where SD.Ranked_data = 1
+order by CAST(SD.month as integer) ASC
+
+---------------------------------------
+-- ID 9814
+-- Find the number of times the exact words bull and bear appear in the contents column.
+-- Count all occurrences, even if they appear multiple times within the same row.
+-- Matches should be case-insensitive and only count exact words,
+-- that is, exclude substrings like bullish or bearing.
+-- Output the word (bull or bear) and the corresponding number of occurrences.
+-- Table
+-- google_file_store
+With Words as
+(
+select
+lower(
+unnest
+(
+string_to_array
+(
+regexp_replace(contents,'[[:punct:]]','','g')
+,' '
+)
+)
+)
+as word
+from google_file_store
+)
+select W.word,count(*) as nentry from Words W
+where W.word = 'bull' or W.word = 'bear'
+group by W.word
+order by nentry DESC
+
+---------------------------------------
+-- ID 2007
+-- Compare the total number of comments made by users
+-- in each country during December 2019 and January 2020.
+-- For each month, rank countries by their
+-- total number of comments in descending order.
+-- Countries with the same total should share the same rank,
+-- and the next rank should increase by one (without skipping numbers).
+-- Return the names of the countries whose rank improved
+-- from December to January (that is, their rank number became smaller).
+--
+-- Tables
+-- fb_comments_count
+-- fb_active_users
+With Cleaned_data as (
+select
+FB.country, to_char(FC.created_at,'MM') as Month,
+sum(FC.number_of_comments) as Sum_BasedOn_Month
+from fb_active_users FB
+inner join fb_comments_count FC
+on FB.user_id = FC.user_id
+group by to_char(FC.created_at,'MM'), FB.country
+order by cast(to_char(FC.created_at,'MM') as integer) ASC
+),
+Ranked_data as (
+select
+country,month,sum_basedon_month,
+DENSE_RANK() over
+(partition by month order by
+sum_basedon_month DESC) as Ranked_Based_on_Month
+from Cleaned_data
+where month = '01' or month = '12'
+)
+select RD1.country from Ranked_data RD1
+inner join Ranked_data RD2
+on RD1.country = RD2.country
+where RD1.month='01' and RD2.month='12'
+and RD1.ranked_based_on_month < RD2.ranked_based_on_month
+--------------------------------------
