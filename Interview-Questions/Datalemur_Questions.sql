@@ -57,3 +57,60 @@ GROUP BY user_id
 HAVING COUNT(post_id) >= 2;
 
 --------------------------------------
+SELECT sender_id,count(*) as  SUM_OF_MESSAGES
+FROM messages
+WHERE sent_date BETWEEN '2022-08-01' AND '2022-08-31'
+GROUP BY sender_id
+ORDER BY count(*) DESC
+LIMIT 2
+
+--------------------------------------
+with DUPLICATE_JOB_COUNT as
+(
+SELECT company_id, count(job_id) from job_listings
+GROUP BY company_id
+HAVING count(job_id) > 1
+)
+SELECT count(company_id) as Company_count from DUPLICATE_JOB_COUNT
+
+--------------------------------------
+SELECT
+U.city,
+count(*) as Order_count
+FROM trades T
+inner join users U
+on T.user_id = U.user_id
+where T.status = 'Completed'
+GROUP by U.city
+order by count(*) DESC
+LIMIT 3
+
+--------------------------------------
+SELECT
+EXTRACT(MONTH from submit_date) as mth,
+product_id,
+ROUND(AVG(stars),2) as avg_stars
+FROM reviews
+GROUP BY EXTRACT(MONTH from submit_date), product_id
+ORDER BY EXTRACT(MONTH from submit_date), product_id
+
+--------------------------------------
+SELECT E.employee_id, E.name from employee E
+inner join employee M
+on E.manager_id = M.employee_id
+where E.salary > M.salary
+
+--------------------------------------
+SELECT account_id,
+SUM(
+CASE
+WHEN transaction_type = 'Deposit' THEN amount
+WHEN transaction_type = 'Withdrawal' THEN -1*amount
+END) AS final_balance
+FROM transactions
+GROUP BY account_id
+
+--------------------------------------
+--------------------------------------
+--------------------------------------
+--------------------------------------
