@@ -8,7 +8,7 @@ Full → Latest Differential → Transaction Logs
 Heap:
 A table with out clustered index. Rows are stored where space is available. by this faster inserts can be done. slow reads
 Default port: 1433
-Stored procedures: modify db state and does not have to return a value but can have output parameters
+Stored procedures: modify db state and does not have to return a value but can have output parameters  sp_help
 Function: must return a value, can not modify db state, often use for cal calculations
 Scalar Functions: returns a single value
 Table-Valued Functions: return a table and can use in from clauses
